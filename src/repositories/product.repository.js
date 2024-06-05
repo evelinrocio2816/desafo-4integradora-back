@@ -86,7 +86,7 @@ class ProductRepository {
           : null,
       };
     } catch (error) {
-      throw new Error("Error");
+      logger.error("Error");
     }
   }
 

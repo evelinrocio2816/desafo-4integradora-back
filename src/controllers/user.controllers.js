@@ -12,6 +12,9 @@ const {generateResetToken}= require("../utils/tokenreset.js")
 const EmailManager = require("../services/email.js");
 const emailManager = new EmailManager();
 
+const UserRepository = require("../repositories/user.repository.js");
+const userRepository = new UserRepository();
+
 class UserController {
   async register(req, res) {
     const { first_name, last_name, email, password, age } = req.body;
@@ -110,6 +113,16 @@ class UserController {
   }
 }
   async logout(req, res) {
+    if (req.user) {
+      try {
+          req.user.last_connection = new Date();
+          await req.user.save();
+      } catch (error) {
+          logger.error(error);
+          res.status(500).send("Error interno del servidor");
+          return;
+      }
+  }
     res.clearCookie("CookieToken");
     logger.info("Usuario desconectado.");
     res.redirect("/login");
@@ -199,21 +212,77 @@ class UserController {
 
 
   async togglePremium(req, res) {
-     const { uid } = req.params;
+    const { uid } = req.params;
       try {
-         
-          const user = await UserModel.findById(uid);
+          
+          const user = await UserRepository.findById(uid);
           if (!user) {
               return res.status(404).json({ message: 'Usuario no encontrado' });
           }
+          const requiredDocuments = ['Identificación', 'Comprobante de domicilio', 'Comprobante de estado de cuenta'];
+          const userDocuments = user.documents.map(doc => doc.name);
+
+          
+          const hasRequiredDocuments = requiredDocuments.every(doc => userDocuments.includes(doc));
+
+          if (!hasRequiredDocuments) {
+              return res.status(400).json({ message: 'El usuario debe cargar los siguientes documentos: Identificación, Comprobante de domicilio, Comprobante de estado de cuenta' });
+          }
+
           const newRole = user.role === 'user' ? 'premium' : 'user';
-          const actualized = await UserModel.findByIdAndUpdate(uid, { role: newRole }, { new: true });
+          const actualized = await UserRepository.updateUserRole(uid, { role: newRole }, { new: true });
+
+
           res.json(actualized);
       } catch (error) {
           logger.error(error);
           res.status(500).json({ message: 'Error interno del servidor' });
       }
   }
+
+
+
+  //4 integradora
+  async uploadDocuments(req, res) {
+    const { uid } = req.params;
+    const uploadedDocuments = req.files;
+    try {
+        const user = await userRepository.findById(uid);
+        if (!user) {
+            return res.status(404).send("Usuario no encontrado");
+        }
+        // Verificar si se subieron documentos y actualizar el usuario
+        if (uploadedDocuments) {
+            if (uploadedDocuments.document) {
+                user.documents = user.documents.concat(uploadedDocuments.document.map(doc => ({
+                    name: doc.originalname,
+                    reference: doc.path
+                })));
+            }
+            if (uploadedDocuments.products) {
+                user.documents = user.documents.concat(uploadedDocuments.products.map(doc => ({
+                    name: doc.originalname,
+                    reference: doc.path 
+                })));
+            }
+            if (uploadedDocuments.profile) {
+                user.documents = user.documents.concat(uploadedDocuments.profile.map(doc => ({
+                    name: doc.originalname,
+                    reference: doc.path 
+                })));
+            }
+        }
+
+        // Guardo los cambios en la base de datos
+        await user.save();
+
+        res.status(200).send("Documentos subidos exitosamente");
+    } catch (error) {
+        logger.error(error);
+        res.status(500).send('Error interno del servidor');
+    }
+};
+
  
      
 }

@@ -20,6 +20,8 @@ const logger= require("./utils/loggers.js")
 //Swagger
 const swaggerJSDoc = require("swagger-jsdoc")
 const swaggerUiExpress = require("swagger-ui-express")
+
+
 //Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
