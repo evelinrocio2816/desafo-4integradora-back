@@ -15,8 +15,8 @@ router.post("/requestPasswordReset", userController.requestPasswordReset);
 router.post('/reset-password', userController.resetPassword);
 
 router.put('/premium/:uid', userController.togglePremium)
-
-
 router.post('/:uid/documents', upload.fields([{ name: 'document' }, { name: 'products' }, { name: 'profile' }]), userController.uploadDocuments);
+
+
 
 module.exports = router

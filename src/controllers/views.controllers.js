@@ -184,6 +184,8 @@ async renderProductDetails(req, res) {
             res.status(500).send("Error interno del servidor");
         }
     }
+
+  
   }
 
 

@@ -17,6 +17,8 @@ const addLogger= require("./middleware/logger.js")
 const TestRouter = require("./routes/Test.router.js")
 const logger= require("./utils/loggers.js")
 
+const checkoutRouter = require("./routes/checkout.router.js")
+
 //Swagger
 const swaggerJSDoc = require("swagger-jsdoc")
 const swaggerUiExpress = require("swagger-ui-express")
@@ -43,7 +45,8 @@ initializePassport();
 
 
 ////Handlebars
-app.engine("handlebars", exphbs.engine());
+
+app.engine("handlebars",exphbs.engine());
 app.set("view engine", "handlebars");
 app.set("views", "./src/views");
 
@@ -58,6 +61,8 @@ app.use("/api/user", userRouter);
 app.use("/", viewsRouter);
 app.use("/" , mockingRouter)
 app.use("/", TestRouter)
+
+app.use('/checkout', checkoutRouter);
 
 
 const httpServer = app.listen(PORT, () => {
