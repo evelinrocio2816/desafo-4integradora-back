@@ -4,6 +4,7 @@ const passport = require("passport");
 const UserController = require("../controllers/user.controllers.js");
 const userController = new UserController();
 const upload = require("../middleware/multer.js");
+const cron = require("node-cron");
 
 
 router.post("/register", userController.register);
@@ -17,6 +18,7 @@ router.post('/reset-password', userController.resetPassword);
 router.put('/premium/:uid', userController.togglePremium)
 router.post('/api/user/:uid/documents', upload.fields([{ name: 'document' }, { name: 'products' }, { name: 'profile' }]), userController.uploadDocuments);
 
-
+// Ejecutar la limpieza de usuarios inactivos cada 30 minutos
+cron.schedule('*/30 * * * *', () => { userController.cleanInactiveUsers();});
 
 module.exports = router

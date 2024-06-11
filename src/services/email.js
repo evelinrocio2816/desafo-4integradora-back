@@ -54,6 +54,23 @@ class EmailManager {
             throw new Error("Error al enviar correo electrónico");
         }
     }
+    async sendEmail({ to, subject, first_name }) {
+        const mailOptions = {
+            from: "<Evelinr2816@gmail.com>",
+            to: email,
+            subject: "Eliminacion de la cuenta",
+            html: `<h1>Eliminacion</h1>
+                   <p> ${first_name} </p>
+                   <p>Decidimos eliminar tu cuenta por registro de inactividad`
+        };
+    
+        try {
+          await this.transporter.sendMail(mailOptions);
+          logger.info(`Correo enviado a ${to}`);
+        } catch (error) {
+          logger.error('Error enviando correo:', error);
+        }
+      }
 }
 
 module.exports = EmailManager;
