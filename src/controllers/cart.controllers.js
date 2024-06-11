@@ -178,7 +178,8 @@ class CartController {
             client: userWithCart.first_name,
             email: userWithCart.email,
             numTicket: ticket._id,
-            totalAmount: ticket.amount
+            totalAmount: ticket.amount,
+            products: cart.products
 
          })
            

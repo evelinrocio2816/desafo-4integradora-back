@@ -1,17 +1,12 @@
-const mercadopago = require("mercadopago");
-const { Access_token } = require("../config/config");
 
-// Configuración de Mercado Pago
-mercadopago.configurations.configure({
-  access_token: Access_token
-});
+const { MercadoPagoConfig, Preference } = require("mercadopago");
+const { Access_token } = require("../config/config.js");
 
-const renderCheckoutPage = (req, res) => {
-  res.render('checkout');
-};
+const client = new MercadoPagoConfig ({access_token: Access_token});
+
 
 const createPreference = async (req, res) => {
-  let preference = {
+  let body = {
     items: [
       {
         title: req.body.title,
@@ -28,10 +23,11 @@ const createPreference = async (req, res) => {
   };
 
   try {
-    const response = await mercadopago.preferences.create(preference);
-    res.json({ id: response.body.id });
+    const preference = new Preference(client);
+    const result = await preference.create({body});
+    res.json({ id: result.id });
   } catch (error) {
-    res.status(500).send('Error al crear la preferencia');
+    res.status(500).send({message:"Error al crear la preferencia", error: error.message})
   }
 };
 
@@ -48,7 +44,6 @@ const pending = (req, res) => {
 };
 
 module.exports= {
-    renderCheckoutPage,
     createPreference,
     success,
     failure,

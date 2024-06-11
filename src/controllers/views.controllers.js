@@ -184,9 +184,13 @@ async renderProductDetails(req, res) {
             res.status(500).send("Error interno del servidor");
         }
     }
-
-  
+    async renderCheckoutPage(req, res){
+      res.render('checkout');
+    };
+    async renderDocuments(req, res) {
+      const { uid } = req.params;
+      res.render("documents", { uid });
   }
-
+}
 
 module.exports = ViewsController;

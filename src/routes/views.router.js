@@ -21,6 +21,8 @@ router.get("/panel-premium", viewsController.renderPremium);
 
 // Ruta para obtener los detalles del producto
 router.get('/products/:pid', viewsController.renderProductDetails);
-
+// Ruta para mostrar la página de checkout
+router.get('/',viewsController.renderCheckoutPage);
+router.get("/:uid", viewsController.renderDocuments)
 module.exports = router;
 

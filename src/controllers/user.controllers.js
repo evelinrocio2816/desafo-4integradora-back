@@ -246,34 +246,44 @@ class UserController {
   async uploadDocuments(req, res) {
     const { uid } = req.params;
     const uploadedDocuments = req.files;
+    const fileType = req.body.type;
     try {
         const user = await userRepository.findById(uid);
         if (!user) {
             return res.status(404).send("Usuario no encontrado");
         }
-        // Verificar si se subieron documentos y actualizar el usuario
-        if (uploadedDocuments) {
-            if (uploadedDocuments.document) {
-                user.documents = user.documents.concat(uploadedDocuments.document.map(doc => ({
-                    name: doc.originalname,
-                    reference: doc.path
-                })));
-            }
-            if (uploadedDocuments.products) {
-                user.documents = user.documents.concat(uploadedDocuments.products.map(doc => ({
-                    name: doc.originalname,
-                    reference: doc.path 
-                })));
-            }
-            if (uploadedDocuments.profile) {
-                user.documents = user.documents.concat(uploadedDocuments.profile.map(doc => ({
-                    name: doc.originalname,
-                    reference: doc.path 
-                })));
-            }
+        
+        // Procesar los archivos según su tipo
+        switch (fileType) {
+            case "document":
+                if (uploadedDocuments && uploadedDocuments.documents) {
+                    user.documents = user.documents.concat(uploadedDocuments.document.map(doc => ({
+                        name: doc.originalname,
+                        reference: doc.path
+                    })));
+                }
+                break;
+            case "product":
+                if (uploadedDocuments && uploadedDocuments.products) {
+                    user.products = user.products.concat(uploadedDocuments.products.map(doc => ({
+                        name: doc.originalname,
+                        reference: doc.path 
+                    })));
+                }
+                break;
+            case "profile":
+                if (uploadedDocuments && uploadedDocuments.profile) {
+                    user.profile = user.profile.concat(uploadedDocuments.profile.map(doc => ({
+                        name: doc.originalname,
+                        reference: doc.path 
+                    })));
+                }
+                break;
+            default:
+                return res.status(400).send("Tipo de archivo no válido");
         }
 
-        // Guardo los cambios en la base de datos
+        // Guardar los cambios en la base de datos
         await user.save();
 
         res.status(200).send("Documentos subidos exitosamente");
@@ -281,8 +291,8 @@ class UserController {
         logger.error(error);
         res.status(500).send('Error interno del servidor');
     }
-};
- 
+}
+
      
 }
 module.exports = UserController;
