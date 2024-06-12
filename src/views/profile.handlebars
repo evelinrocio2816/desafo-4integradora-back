@@ -10,6 +10,7 @@
 {{#if this.isAdmin}}
 	<a class="btnMios" href="/realtimeproducts">Modificar Productos</a>
   <a class="btnMios" href="/products">Tienda</a>
+  <a class="btnMios" href="/admin">Administar Usuarios</a>
 	{{else}}
 	{{#if this.isPremium}}
 	<a class="btnMios" href="/realtimeproducts">Panel Premium</a>
@@ -19,5 +20,5 @@
 	{{/if}}
 
 
-<a class="btnMios" href="/:uid/documents">¿Queres ser vendedor?</a>
+<a class="btnMios" href="/documents/:uid">¿Queres ser vendedor?</a>
 </div>

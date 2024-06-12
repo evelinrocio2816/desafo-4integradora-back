@@ -298,7 +298,7 @@ class UserController {
 async cleanInactiveUsers(req, res) {
   try {
     // Tiempo límite de inactividad (3 minutos para pruebas, 2 días para producción)
-    const inactiveTimeLimit = moment().subtract(3, 'minutes'); // Para pruebas
+    const inactiveTimeLimit = moment().subtract(30, 'minutes'); // Para pruebas
     // const inactiveTimeLimit = moment().subtract(2, 'days'); // Para producción
 
     // Encontrar usuarios inactivos
@@ -329,6 +329,61 @@ async cleanInactiveUsers(req, res) {
     res.status(500).send('Error interno del servidor');
   }
 }
-     
+
+
+// En UserController.js
+async listUsers(req, res) {
+  try {
+      const users = await UserRepository.getAllUsers(); 
+      res.render('admin-users', { users });
+  } catch (error) {
+      logger.error(error);
+      res.status(500).send('Error interno del servidor');
+  }
 }
+
+// En UserController.js
+async editUser(req, res) {
+  const { _id } = req.params;
+  const { role } = req.body;
+
+  try {
+      const updatedUser = await UserRepository.updateUserRole(_id, { role }, { new: true });
+
+      if (!updatedUser) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      res.redirect('/admin/users'); // Redirige a la lista de usuarios después de editar
+  } catch (error) {
+      logger.error(error);
+      res.status(500).send('Error interno del servidor');
+  }
+}
+
+
+// En UserController.js
+async deleteUser(req, res) {
+  const { _id } = req.params;
+
+  try {
+      const deletedUser = await UserRepository.deleteUserById(_id);
+
+      if (!deletedUser) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+
+      res.redirect('/admin/users'); // Redirige a la lista de usuarios después de eliminar
+  } catch (error) {
+      logger.error(error);
+      res.status(500).send('Error interno del servidor');
+  }
+}
+
+
+}
+
 module.exports = UserController;
+
+     
+

@@ -33,6 +33,13 @@ class UserRepository {
             throw error;
         }
     }
+    async getAllUsers() {
+        try {
+            return await UserModel.find({});
+        } catch (error) {
+            throw error;
+        }
+    }
 
     async updateUserRole(userId, newRole) {
         try {

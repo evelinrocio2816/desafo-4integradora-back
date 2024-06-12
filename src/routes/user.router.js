@@ -21,4 +21,8 @@ router.post('/api/user/:uid/documents', upload.fields([{ name: 'document' }, { n
 // Ejecutar la limpieza de usuarios inactivos cada 30 minutos
 cron.schedule('*/30 * * * *', () => { userController.cleanInactiveUsers();});
 
-module.exports = router
+router.get('/admin/users', userController.listUsers);
+router.post('/admin/users/:_id/edit', userController.editUser);
+router.post('/admin/users/:_id/delete', userController.deleteUser);
+
+module.exports= router

@@ -190,7 +190,16 @@ async renderProductDetails(req, res) {
     async renderDocuments(req, res) {
       const { uid } = req.params;
       res.render("documents", { uid });
-  }
-}
+    }
 
+    async renderAdmin(req, res) {
+      try {
+        const users = await UserRepository.getAllUsers(); // Obtener los usuarios desde el repositorio
+        res.render('admin', { users }); // Renderizar la vista 'admin' con los usuarios
+      } catch (error) {
+        logger.error(error);
+        res.status(500).send('Error interno del servidor');
+      }
+}
+}
 module.exports = ViewsController;
