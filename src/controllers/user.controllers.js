@@ -380,9 +380,25 @@ async deleteUser(req, res) {
   }
 }
 
+// Controlador para obtener todos los usuarios
+async getAllUsers (req, res){
+  try {
+    // Buscar todos los usuarios en la base de datos
+    const users = await userRepository.getAllUsers({}, 'first_name last_name email role');
 
+    // Verificar si se encontraron usuarios
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron usuarios.' });
+    }
+
+    // Devolver la lista de usuarios con los campos especificados
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    res.status(500).json({ message: 'Error al obtener usuarios.' });
+  }
 }
-
+}
 module.exports = UserController;
 
      

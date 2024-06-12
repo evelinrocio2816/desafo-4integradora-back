@@ -25,4 +25,7 @@ router.get('/admin/users', userController.listUsers);
 router.post('/admin/users/:_id/edit', userController.editUser);
 router.post('/admin/users/:_id/delete', userController.deleteUser);
 
+// Ruta para obtener todos los usuarios
+router.get('/',userController.getAllUsers);
+
 module.exports= router
