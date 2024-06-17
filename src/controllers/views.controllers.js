@@ -1,5 +1,6 @@
 const ProductModel = require("../models/products.models.js");
 const CartRepository = require("../repositories/cart.repository.js");
+const UserRepository = require("../repositories/user.repository.js");
 const cartRepository = new CartRepository();
 const logger =require("../utils/loggers.js") 
 
@@ -188,9 +189,10 @@ async renderProductDetails(req, res) {
       res.render('checkout');
     };
     async renderDocuments(req, res) {
-      const { uid } = req.params;
-      res.render("documents", { uid });
+      const  uid  = req.user._id.toString();
+      res.render("documents", { uid: uid});
     }
+
 
     async renderAdmin(req, res) {
       try {

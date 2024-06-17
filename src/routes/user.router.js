@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 const UserController = require("../controllers/user.controllers.js");
 const userController = new UserController();
-const upload = require("../middleware/multer.js");
+const upload = require("../services/multer.js");
 const cron = require("node-cron");
 
 
@@ -25,6 +25,7 @@ router.get('/admin/users', userController.listUsers);
 router.post('/admin/users/:_id/edit', userController.editUser);
 router.post('/admin/users/:_id/delete', userController.deleteUser);
 
+router.post('/:uid/documents', upload.fields([{ name: 'document' }, { name: 'products' }, { name: 'profile' }]), userController.uploadDocuments);
 // Ruta para obtener todos los usuarios
 router.get('/',userController.getAllUsers);
 

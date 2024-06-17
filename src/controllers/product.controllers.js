@@ -1,7 +1,9 @@
 const ProductRepository = require("../repositories/product.repository");
 const productRepository = new ProductRepository();
 const logger =require("../utils/loggers.js") 
+const EmailManager = require("../services/email.js");
 
+const emailManager = new EmailManager();
 class ProductController {
 
     async addProduct(req, res) {
@@ -63,16 +65,47 @@ class ProductController {
         }
     }
 
+   
+    
     async deleteProduct(req, res) {
         const id = req.params.pid;
         try {
-           logger.info("Eliminando producto con ID:", id);
+            logger.info("Eliminando producto con ID:", id);
+            
+            // Obtener detalles del producto para verificar el usuario propietario
+            const product = await productRepository.getProductsById(id);
+            if (!product) {
+                return res.status(404).json({ error: "Producto no encontrado" });
+            }
+    
+            // Verificar si el propietario es un usuario premium
+            const owner = await userRepository.getUserById(product.owner);
+            if (owner && owner.isPremium) {
+                // Enviar correo electrónico al usuario premium
+                const mailOptions = {
+                    to: owner.email,
+                    subject: 'Producto Eliminado',
+                    first_name: owner.name,
+                    html: `<h1>Producto Eliminado</h1>
+                           <p>Hola ${owner.name},</p>
+                           <p>Te informamos que tu producto con ID ${id} ha sido eliminado.</p>
+                           <p>Saludos,<br>Equipo de Soporte</p>`
+                };
+    
+                try {
+                    await emailManager.sendEmail(mailOptions);
+                    logger.info(`Correo enviado a ${owner.email}`);
+                } catch (emailError) {
+                    logger.error('Error enviando correo:', emailError);
+                }
+            }
+    
             let answer = await productRepository.deleteProduct(id);
-           logger.info("Producto eliminado exitosamente:", answer);
+            logger.info("Producto eliminado exitosamente:", answer);
             res.json(answer);
         } catch (error) {
-           logger.error("Error al eliminar el producto:", error);
-            res.status(500).json({ error: "Error interno del servidor al eliminar el producto" }); 
+            logger.error("Error al eliminar el producto:", error);
+            res.status(500).json({ error: "Error interno del servidor al eliminar el producto" });
         }
     }
     //funcion  para  ir a detalles

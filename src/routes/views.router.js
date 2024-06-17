@@ -23,7 +23,7 @@ router.get("/panel-premium", viewsController.renderPremium);
 router.get('/products/:pid', viewsController.renderProductDetails);
 // Ruta para mostrar la página de checkout
 router.get('/',viewsController.renderCheckoutPage);
-router.get("/documents/:uid", viewsController.renderDocuments)
+router.get("/documents", viewsController.renderDocuments)
 
 router.get("/admin", viewsController.renderAdmin)
 
