@@ -281,7 +281,7 @@ class UserController {
   async cleanInactiveUsers(req, res) {
     try {
       // Tiempo límite de inactividad (3 minutos para pruebas, 2 días para producción)
-      const inactiveTimeLimit = moment().subtract(30, "minutes"); // Para pruebas
+      const inactiveTimeLimit = moment().subtract(1, "minutes"); // Para pruebas
       // const inactiveTimeLimit = moment().subtract(2, 'days'); // Para producción
 
       // Encontrar usuarios inactivos

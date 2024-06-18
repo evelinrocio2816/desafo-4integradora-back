@@ -54,10 +54,10 @@ class EmailManager {
             throw new Error("Error al enviar correo electrónico");
         }
     }
-    async sendEmail({ to, subject, first_name }) {
+    async sendEmail({ to, first_name }) {
         const mailOptions = {
             from: "<Evelinr2816@gmail.com>",
-            to: email,
+            to: to,
             subject: "Eliminacion de la cuenta",
             html: `<h1>Eliminacion</h1>
                    <p> ${first_name} </p>
