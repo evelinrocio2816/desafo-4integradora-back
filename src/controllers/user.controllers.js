@@ -319,7 +319,7 @@ class UserController {
     }
   }
 
-  // En UserController.js
+  
   async listUsers(req, res) {
     try {
       const users = await userRepository.getAllUsers();
@@ -330,22 +330,18 @@ class UserController {
     }
   }
 
-  // En UserController.js
   async editUser(req, res) {
     const { _id } = req.params;
     const { role } = req.body;
-
     try {
       const updatedUser = await userRepository.updateUserRole(
         _id,
         { role },
         { new: true }
       );
-
       if (!updatedUser) {
         return res.status(404).json({ message: "Usuario no encontrado" });
       }
-
       res.redirect("/admin/users"); // Redirige a la lista de usuarios después de editar
     } catch (error) {
       logger.error(error);
@@ -353,7 +349,6 @@ class UserController {
     }
   }
 
-  // En UserController.js
   async deleteUser(req, res) {
     const { _id } = req.params;
 
@@ -387,8 +382,9 @@ class UserController {
 
       // Devolver la lista de usuarios con los campos especificados
       res.status(200).json(users);
+      console.log(users);
     } catch (error) {
-      console.error("Error al obtener usuarios:", error);
+     logger.error("Error al obtener usuarios:", error);
       res.status(500).json({ message: "Error al obtener usuarios." });
     }
   }

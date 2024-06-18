@@ -65,8 +65,6 @@ class ProductController {
         }
     }
 
-   
-    
     async deleteProduct(req, res) {
         const id = req.params.pid;
         try {
@@ -82,18 +80,9 @@ class ProductController {
             const owner = await userRepository.getUserById(product.owner);
             if (owner && owner.isPremium) {
                 // Enviar correo electrónico al usuario premium
-                const mailOptions = {
-                    to: owner.email,
-                    subject: 'Producto Eliminado',
-                    first_name: owner.name,
-                    html: `<h1>Producto Eliminado</h1>
-                           <p>Hola ${owner.name},</p>
-                           <p>Te informamos que tu producto con ID ${id} ha sido eliminado.</p>
-                           <p>Saludos,<br>Equipo de Soporte</p>`
-                };
-    
+                const emailManager = new EmailManager();
                 try {
-                    await emailManager.sendEmail(mailOptions);
+                    await emailManager.sendProductDeletionEmail(owner.email, owner.name, id);
                     logger.info(`Correo enviado a ${owner.email}`);
                 } catch (emailError) {
                     logger.error('Error enviando correo:', emailError);
@@ -108,6 +97,7 @@ class ProductController {
             res.status(500).json({ error: "Error interno del servidor al eliminar el producto" });
         }
     }
+    
     //funcion  para  ir a detalles
 
     async getProductDetails(req, res) {

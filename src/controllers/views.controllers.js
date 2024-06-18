@@ -1,13 +1,14 @@
 const ProductModel = require("../models/products.models.js");
 const CartRepository = require("../repositories/cart.repository.js");
 const UserRepository = require("../repositories/user.repository.js");
+const userRepository = new UserRepository()
 const cartRepository = new CartRepository();
 const logger =require("../utils/loggers.js") 
 
 class ViewsController {
     async renderProducts(req, res) {
         try {
-            const { page = 1, limit = 3 } = req.query;
+            const { page = 1, limit = 4 } = req.query;
             const skip = (page - 1) * limit;
             const products = await ProductModel
                 .find()
@@ -129,7 +130,7 @@ async renderProductDetails(req, res) {
       const user = req.user; 
         try {
           logger.info("Renderizando vista de productos en tiempo real");
-            res.render("realtimeproducts", {role: user.role, email: user.email});
+            res.render("realtimeproducts",  {role: user.role, email: user.email});
         } catch (error) {
           logger.info("Error en la vista real time", error);
             res.status(500).json({ error: "Error interno del servidor" });
@@ -196,8 +197,9 @@ async renderProductDetails(req, res) {
 
     async renderAdmin(req, res) {
       try {
-        const users = await UserRepository.getAllUsers(); // Obtener los usuarios desde el repositorio
+        const users = await userRepository.getAllUsers(); // Obtener los usuarios desde el repositorio
         res.render('admin', { users }); // Renderizar la vista 'admin' con los usuarios
+        console.log(users);
       } catch (error) {
         logger.error(error);
         res.status(500).send('Error interno del servidor');

@@ -71,6 +71,24 @@ class EmailManager {
           logger.error('Error enviando correo:', error);
         }
       }
+      async sendProductDeletionEmail(email, first_name, productId) {
+        const mailOptions = {
+            from: "<evelinr2816@gmail.com>",
+            to: email,
+            subject: "Producto Eliminado",
+            html: `<h1>Producto Eliminado</h1>
+                   <p>Hola ${first_name},</p>
+                   <p>Te informamos que tu producto con ID ${productId} ha sido eliminado.</p>
+                   <p>Saludos,<br>Equipo de Soporte</p>`
+        };
+
+        try {
+            await this.transporter.sendMail(mailOptions);
+            logger.info(`Correo enviado a ${email}`);
+        } catch (error) {
+            logger.error('Error enviando correo:', error);
+        }
+    }
 }
 
 module.exports = EmailManager;

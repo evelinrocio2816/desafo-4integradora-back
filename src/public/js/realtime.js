@@ -58,7 +58,7 @@ const addProduct = () => {
 
     const owner = role === "premium" ? email : "admin";
 
-    const product = {
+    const products = {
         title: document.getElementById("title").value,
         description: document.getElementById("description").value,
         price: document.getElementById("price").value,
@@ -70,5 +70,5 @@ const addProduct = () => {
         owner
     };
 
-    socket.emit("addProduct", product);
+    socket.emit("addProduct", products);
 }
